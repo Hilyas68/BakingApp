@@ -13,4 +13,5 @@
     <string name="ingredient">Ingredients</string>
     <string name="measure">Measure</string>
     <string name="quantity">Quantity</string>
+    <string name="empty_recipe_list">empty recipe</string>
 </resources>

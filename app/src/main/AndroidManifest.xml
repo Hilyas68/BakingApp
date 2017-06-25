@@ -26,6 +26,28 @@
                 android:value=".ui.MainActivity" />
         </activity>
         <activity android:name=".ui.IngredientStepDetailActivity"></activity>
+
+        <provider
+            android:name=".model.RecipeProvider"
+            android:authorities="com.example.android.movies"
+            android:exported="false" />
+
+        <receiver android:name=".ui.RecipeAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="co.enoobong.bakingapp.ACTION_DATA_UPDATED"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_app_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".ui.RecipeWidgetRemoteViewsService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>
