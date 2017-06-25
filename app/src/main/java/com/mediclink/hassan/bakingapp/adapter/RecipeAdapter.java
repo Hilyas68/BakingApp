@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mediclink.hassan.bakingapp.R;
-import com.mediclink.hassan.bakingapp.model.Ingredient;
 import com.mediclink.hassan.bakingapp.model.Recipe;
+import com.mediclink.hassan.bakingapp.ui.IngredientsStepActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public static final String RECIPE = "recipe";
     private Context context;
     private ArrayList<Recipe> mRecipe;
+    //private List<Ingredient> mIngredients;
 
     public RecipeAdapter(Context context, ArrayList<Recipe> mRecipe) {
         this.context = context;
@@ -40,10 +41,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     @Override
     public void onBindViewHolder(RecipeViewHolder holder, int position) {
+
+        Recipe recipe = mRecipe.get(position);
         String servings = "Servings : ";
-        holder.setRecipeName(mRecipe.get(position).getName());
-        holder.setRecipeImage(context , mRecipe.get(position).getImageUrl());
-        holder.setServings(servings + String.valueOf(mRecipe.get(position).getServings()));
+        holder.setRecipeName(recipe.getName());
+        holder.setRecipeImage(context , recipe.getImageUrl());
+        holder.setServings(servings + String.valueOf(recipe.getServings()));
     }
 
     @Override
@@ -58,14 +61,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         TextView mRecipeName;
         ImageView mRecipeImageView;
         TextView mServing;
-        TextView mIngredients;
 
         public RecipeViewHolder(View itemView) {
             super(itemView);
             mRecipeName = (TextView)itemView.findViewById(R.id.recipeName);
             mServing = (TextView) itemView.findViewById(R.id.serving);
             mRecipeImageView = (ImageView) itemView.findViewById(R.id.recipeimage);
-            mIngredients = (TextView) itemView.findViewById(R.id.ingredientsList);
+
             itemView.setOnClickListener(this);
         }
 
@@ -92,9 +94,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 //            int clickedPosition = getAdapterPosition();
 //            Toast.makeText(context, mRecipe.get(clickedPosition).getName(), Toast.LENGTH_LONG).show();
 
-//            Intent intent = new Intent(context, IngredientList.class);
-//            intent.putExtra(RECIPE, mRecipe.get(getAdapterPosition()));
-//            context.startActivity(intent);
+            Intent intent = new Intent(context, IngredientsStepActivity.class);
+            intent.putExtra(RECIPE, mRecipe.get(getAdapterPosition()));
+            context.startActivity(intent);
         }
     }
 }
