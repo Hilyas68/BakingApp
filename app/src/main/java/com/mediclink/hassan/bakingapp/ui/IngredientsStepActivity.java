@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.mediclink.hassan.bakingapp.model.RecipeContract.RecipeEntry;
 
 import java.util.ArrayList;
 
+import static android.R.attr.id;
 import static com.mediclink.hassan.bakingapp.adapter.IngredientStepsAdapter.INGREDIENTS;
 import static com.mediclink.hassan.bakingapp.adapter.IngredientStepsAdapter.STEPS;
 import static com.mediclink.hassan.bakingapp.adapter.RecipeAdapter.RECIPE;
@@ -38,14 +40,21 @@ public class IngredientsStepActivity extends AppCompatActivity implements Master
         setContentView(R.layout.activity_ingredients_step);
 
         mRecipe = getIntent().getParcelableExtra(RECIPE);
-         actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle( mRecipe.getName());
+            actionBar.setTitle(mRecipe.getName());
         }
 
         mTwoPane = findViewById(R.id.detail_linear_layout) != null;
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.add, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -54,23 +63,23 @@ public class IngredientsStepActivity extends AppCompatActivity implements Master
         // When the home button is pressed, take the user back to the VisualizerActivity
         if (id == android.R.id.home) {
             onBackPressed();
-//        }
+            return true;
+        }
 //
-//        if (id == android.R.id.home) {
+        if (id == R.id.action_add) {
             if (isAdd()) {
                 removeRecipe();
-
+                item.setTitle("ADD");
                 Toast.makeText(this, String.format(getString(R.string.removed_message), mRecipe.getName()), Toast.LENGTH_LONG).show();
             } else {
                 addRecipe();
-
+                item.setTitle("REMOVE");
                 Toast.makeText(this, String.format(getString(R.string.added_message), mRecipe.getName()), Toast.LENGTH_LONG).show();
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onIngredientStepSelected(int position) {
@@ -137,7 +146,10 @@ public class IngredientsStepActivity extends AppCompatActivity implements Master
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_add);
-        return super.onPrepareOptionsMenu(menu);
+        if(isAdd()) {
+            menuItem.setTitle("REMOVE");
+        }
+        return true;
     }
 
     private void getIngredient(ArrayList<Ingredient> ingredients) {
