@@ -1,17 +1,26 @@
 package com.mediclink.hassan.bakingapp.ui;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.mediclink.hassan.bakingapp.R;
+import com.mediclink.hassan.bakingapp.model.Ingredient;
 import com.mediclink.hassan.bakingapp.model.Recipe;
+import com.mediclink.hassan.bakingapp.model.RecipeContract.RecipeEntry;
+
+import java.util.ArrayList;
 
 import static com.mediclink.hassan.bakingapp.adapter.IngredientStepsAdapter.INGREDIENTS;
 import static com.mediclink.hassan.bakingapp.adapter.IngredientStepsAdapter.STEPS;
 import static com.mediclink.hassan.bakingapp.adapter.RecipeAdapter.RECIPE;
+import static com.mediclink.hassan.bakingapp.model.RecipeContract.RECIPE_CONTENT_URI;
 
 public class IngredientsStepActivity extends AppCompatActivity implements MasterListFragment.OnIngredientStepClickListener {
 
@@ -45,7 +54,19 @@ public class IngredientsStepActivity extends AppCompatActivity implements Master
         // When the home button is pressed, take the user back to the VisualizerActivity
         if (id == android.R.id.home) {
             onBackPressed();
+//        }
+//
+//        if (id == android.R.id.home) {
+            if (isAdd()) {
+                removeRecipe();
 
+                Toast.makeText(this, String.format(getString(R.string.removed_message), mRecipe.getName()), Toast.LENGTH_LONG).show();
+            } else {
+                addRecipe();
+
+                Toast.makeText(this, String.format(getString(R.string.added_message), mRecipe.getName()), Toast.LENGTH_LONG).show();
+            }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -90,4 +111,47 @@ public class IngredientsStepActivity extends AppCompatActivity implements Master
             startActivity(intent);
         }
     }
+
+    private boolean isAdd() {
+        String[] projection = {RecipeEntry.COLUMN_RECIPE_ID};
+        String selection = RecipeEntry.COLUMN_RECIPE_ID + " = " + mRecipe.getId();
+        Cursor cursor = getContentResolver().query(RECIPE_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null,
+                null);
+
+        return (cursor != null ? cursor.getCount() : 0) > 0;
+    }
+
+    synchronized private void removeRecipe() {
+        getContentResolver().delete(RECIPE_CONTENT_URI, null, null);
+    }
+
+    synchronized private void addRecipe() {
+        getContentResolver().delete(RECIPE_CONTENT_URI, null, null);
+        getIngredient(mRecipe.getIngredients());
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.action_add);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void getIngredient(ArrayList<Ingredient> ingredients) {
+
+        for (Ingredient ingredient : ingredients) {
+            ContentValues values = new ContentValues();
+            values.put(RecipeEntry.COLUMN_RECIPE_ID, mRecipe.getId());
+            values.put(RecipeEntry.COLUMN_RECIPE_NAME, mRecipe.getName());
+            values.put(RecipeEntry.COLUMN_INGREDIENT_NAME, ingredient.getIngredient());
+            values.put(RecipeEntry.COLUMN_INGREDIENT_MEASURE, ingredient.getMeasure());
+            values.put(RecipeEntry.COLUMN_INGREDIENT_QUANTITY, ingredient.getQuantity());
+            getContentResolver().insert(RECIPE_CONTENT_URI, values);
+        }
+    }
+
 }
+
