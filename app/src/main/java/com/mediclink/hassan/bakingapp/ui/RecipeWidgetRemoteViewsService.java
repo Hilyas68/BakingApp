@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2017. Ibanga Enoobong Ime (World class developer and entrepreneur in transit)
- */
 
 package com.mediclink.hassan.bakingapp.ui;
 
