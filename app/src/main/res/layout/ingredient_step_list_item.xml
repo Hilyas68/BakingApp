@@ -9,7 +9,6 @@
     android:layout_margin="5dp"
     app:cardPreventCornerOverlap="false">
 
-
     <TextView
         android:id="@+id/tv_ingredient_step"
         android:layout_width="match_parent"
